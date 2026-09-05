@@ -80,8 +80,15 @@
   .pgInfo{color:var(--sub);white-space:nowrap}
   .favBtn{background:none;border:none;cursor:pointer;font-size:17px;line-height:1;padding:0 2px;color:#c9ced8}
   .favBtn.on{color:#f5b301}
+  .hidBtn{background:none;border:none;cursor:pointer;font-size:15px;line-height:1;padding:0 2px;color:#c9ced8}
+  .hidBtn.on{color:#94a3b8}
   tr.favrow td{background:#fffaf0}
   tr.favrow td:first-child{box-shadow:inset 3px 0 0 #f5b301}
+  tr.hidrow td{background:#f2f3f5;color:#a2a8b2}
+  tr.hidrow.collapsed td:nth-child(3),tr.hidrow.collapsed td:nth-child(5),tr.hidrow.collapsed td:nth-child(6){display:none}
+  tr.hidrow.collapsed td:nth-child(4) .en{display:none}
+  tr.hidrow.collapsed .cellTitle .zh{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:55vw;font-weight:500;color:#9aa1ac}
+  tr.hidrow .badge{opacity:.55}
   .favStat{color:#b8860b;font-size:12.5px;white-space:nowrap}
   @media(max-width:760px){ .kv{grid-template-columns:88px 1fr} thead th:nth-child(5),thead th:nth-child(6){display:none} td:nth-child(5),td:nth-child(6){display:none} .cellTitle .en{font-size:11px} }
 </style>
@@ -111,7 +118,7 @@
   <div class="tblwrap">
   <table>
     <thead><tr>
-      <th style="width:40px" title="点击星标收藏">★</th>
+      <th style="width:64px" title="★ 收藏  ✕ 隐藏(不感兴趣)">操作</th>
       <th style="width:120px">编号</th>
       <th style="width:70px">类型</th>
       <th>标题（中 / 英）</th>
@@ -231,6 +238,44 @@
   }
   function favRef(p){return p.ref;}
 
+  // ---- hidden (not-interested) projects, same storage pattern ----
+  function loadHids(){
+    var arr=[];
+    if(favStore==="cookie"){
+      var all=document.cookie,m;
+      for(var i=0;i<20;i++){
+        var re=new RegExp("(?:^|; )hids"+i+"=([^;]*)");
+        m=all.match(re);
+        if(!m)break;
+        arr=arr.concat(favsFromString(m[1]));
+      }
+    }else{
+      try{arr=favsFromString(localStorage.getItem("hkuHid")||"");}catch(e){}
+    }
+    return new Set(arr);
+  }
+  function saveHids(set){
+    var arr=Array.from(set);
+    if(favStore==="cookie"){
+      var CHUNK=3000,cur="",c=0;
+      function put(n,v){try{document.cookie=n+"="+v+"; path=/; max-age=31536000";}catch(e){}}
+      for(var i=0;i<arr.length;i++){
+        var piece=encodeURIComponent(arr[i]);
+        if(cur.length+piece.length+1>CHUNK){put("hids"+(c++),cur);cur=piece;}
+        else cur=cur?cur+","+piece:piece;
+      }
+      put("hids"+(c++),cur);
+      for(;c<20;c++){try{document.cookie="hids"+c+"=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";}catch(e){}}
+    }else{
+      try{localStorage.setItem("hkuHid",arr.map(encodeURIComponent).join(","));}catch(e){}
+    }
+  }
+  var hids=loadHids();
+  function toggleHid(ref){
+    if(hids.has(ref))hids.delete(ref);else hids.add(ref);
+    saveHids(hids);
+    render();
+  }
   function match(p){
     if(state.type && p.type!==state.type)return false;
     if(state.area && (p.cats||[]).indexOf(state.area)<0)return false;
@@ -263,14 +308,22 @@
     var pageItems=list.slice(start,start+per);
     document.getElementById("emptyBox").style.display=total?"none":"block";
     pageItems.forEach(function(p){
+      var hid=hids.has(p.ref);
       var tr=document.createElement("tr");
-      if(favs.has(p.ref))tr.className="favrow";
+      if(favs.has(p.ref)&&!hid)tr.className="favrow";
+      if(hid){tr.className=(tr.className?tr.className+" ":"")+"hidrow collapsed";}
       var tdS=el("td");
       var star=el("button","favBtn"+(favs.has(p.ref)?" on":""),favs.has(p.ref)?"★":"☆");
       star.setAttribute("type","button");
       star.setAttribute("aria-label","收藏");
       star.addEventListener("click",function(ev){ev.stopPropagation();toggleFav(p.ref);});
       tdS.appendChild(star);
+      var hbtn=el("button","hidBtn"+(hid?" on":""),hid?"✕":"✕");
+      hbtn.setAttribute("type","button");
+      hbtn.setAttribute("aria-label","不感兴趣/隐藏");
+      hbtn.title=hid?"恢复显示（取消隐藏）":"隐藏（不感兴趣）";
+      hbtn.addEventListener("click",function(ev){ev.stopPropagation();toggleHid(p.ref);});
+      tdS.appendChild(hbtn);
       tr.appendChild(tdS);
       tr.appendChild(el("td",null,p.ref));
       var tdT=el("td");tdT.appendChild(typeBadge(p));
@@ -294,7 +347,9 @@
       tdA.appendChild(el("div","area",p.areaZh||p.areaEn||"—"));
       if(p.areaEn&&p.areaEn!==p.areaZh)tdA.appendChild(el("div","small",p.areaEn));
       tr.appendChild(tdA);
-      tr.addEventListener("click",function(){openDetail(p);});
+      tr.addEventListener("click",function(){
+        if(hids.has(p.ref)){toggleHid(p.ref);}else{openDetail(p);}
+      });
       tb.appendChild(tr);
     });
     document.getElementById("favN").textContent=favs.size;
