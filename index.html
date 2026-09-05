@@ -109,6 +109,7 @@
     <select id="fArea"><option value="">全部方向</option></select>
     <select id="fSup"><option value="">全部导师</option></select>
     <span class="chk"><input type="checkbox" id="fFav"> 只看收藏</span>
+    <span class="chk"><input type="checkbox" id="fNoHid"> 只看未隐藏</span>
     <span class="favStat" id="favStat">☆ 收藏 <b id="favN">0</b></span>
     <button class="btn" id="reset">重置</button>
     <span class="counts" id="counts"></span>
@@ -162,7 +163,7 @@
   document.getElementById("metaLine").textContent =
     "共 " + PROJ.length + " 个项目" ;
 
-  var state={q:"",type:"",area:"",sup:"",favOnly:false,page:1,per:50};
+  var state={q:"",type:"",area:"",sup:"",favOnly:false,noHid:false,page:1,per:50};
 
   // ---- build filter option pools ----
   var supCount={};
@@ -281,6 +282,7 @@
     if(state.area && (p.cats||[]).indexOf(state.area)<0)return false;
     if(state.sup && p.univSupName!==state.sup && p.companySupervisor!==state.sup)return false;
     if(state.favOnly && !favs.has(p.ref))return false;
+    if(state.noHid && hids.has(p.ref))return false;
     if(state.q){
       var q=state.q.toLowerCase();
       var hay=[p.ref,p.titleZh,p.titleEn,p.areaZh,p.areaEn,p.companyZh,p.companyEn,
@@ -297,8 +299,13 @@
   function render(){
     var tb=document.getElementById("rows");tb.textContent="";
     var list=PROJ.filter(match);
-    // favorites pinned to top (stable within group)
-    list.sort(function(a,b){var af=favs.has(a.ref)?1:0,bf=favs.has(b.ref)?1:0;return bf-af;});
+    // order: visible (favorites pinned) first, hidden ones at the very end
+    list.sort(function(a,b){
+      var ha=hids.has(a.ref)?1:0,hb=hids.has(b.ref)?1:0;
+      if(ha!==hb)return ha-hb;
+      var af=favs.has(a.ref)?1:0,bf=favs.has(b.ref)?1:0;
+      return bf-af;
+    });
     var total=list.length;
     var per=state.per;
     var pages=Math.max(1,Math.ceil(total/per));
@@ -487,10 +494,12 @@
     btn.addEventListener("click",function(){perNum.value=this.getAttribute("data-p");state.per=parseInt(perNum.value,10);state.page=1;render();});
   });
   document.getElementById("fFav").addEventListener("change",function(e){state.favOnly=e.target.checked;state.page=1;render();});
+  document.getElementById("fNoHid").addEventListener("change",function(e){state.noHid=e.target.checked;state.page=1;render();});
   document.getElementById("reset").addEventListener("click",function(){
-    state={q:"",type:"",area:"",sup:"",favOnly:false,page:1,per:parseInt(perNum.value,10)||50};
+    state={q:"",type:"",area:"",sup:"",favOnly:false,noHid:false,page:1,per:parseInt(perNum.value,10)||50};
     qEl.value="";document.getElementById("fType").value="";document.getElementById("fArea").value="";
-    document.getElementById("fSup").value="";document.getElementById("fFav").checked=false;render();
+    document.getElementById("fSup").value="";document.getElementById("fFav").checked=false;
+    document.getElementById("fNoHid").checked=false;render();
   });
   render();
 })();
