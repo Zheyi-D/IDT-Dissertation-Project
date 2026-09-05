@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>List of Dissertation Project</title>
+<style>
+  :root{
+    --bg:#f4f6fb; --card:#ffffff; --line:#e3e8f0; --ink:#1f2733; --sub:#6b7686;
+    --acc:#2f5dd0; --acc-soft:#e8effc; --cp:#b45309; --cp-soft:#fdf1dd;
+    --ip:#0f766e; --ip-soft:#e2f5f2; --full:#b91c1c; --full-soft:#fdecec;
+    --ok:#15803d; --ok-soft:#e9f7ee;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink)}
+  header{background:#fff;border-bottom:1px solid var(--line);padding:10px 18px 8px;box-shadow:0 1px 2px rgba(20,40,80,.04)}
+  .h1row{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+  h1{font-size:18px;margin:0}
+  .sub{color:var(--sub);font-size:12px}
+  .tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px}
+  .tools input[type=text]{min-width:300px;flex:1;padding:7px 10px;border:1px solid var(--line);border-radius:8px;font-size:14px}
+  select{padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:#fff;font-size:13px;color:var(--ink)}
+  .chk{display:inline-flex;align-items:center;gap:4px;font-size:13px;color:#374151;cursor:pointer;user-select:none;padding:3px 6px;border-radius:8px}
+  .chk:hover{background:#eef2fa}
+  .counts{margin-left:auto;font-size:12.5px;color:var(--sub);white-space:nowrap}
+  .btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 10px;font-size:13px;cursor:pointer;color:#374151}
+  .btn:hover{background:#f0f3fa}
+  main{max-width:1280px;margin:14px auto 60px;padding:0 12px}
+  .tblwrap{border:1px solid var(--line);box-shadow:0 1px 3px rgba(20,40,80,.06)}
+  table{width:100%;border-collapse:separate;border-spacing:0;background:#fff}
+  thead th{position:sticky;top:0;background:#f8fafc;font-size:12px;color:#475569;text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap;z-index:6}
+  tbody td{padding:9px 10px;border-bottom:1px solid #eef2f7;font-size:13px;vertical-align:top}
+  tbody tr:last-child td{border-bottom:none}
+  tbody tr{cursor:pointer}
+  tbody tr:hover{background:#f2f6ff}
+  .cellTitle .zh{font-weight:600;color:#111827;line-height:1.45}
+  .cellTitle .en{color:#5b6673;font-size:12px;line-height:1.4;margin-top:2px}
+  .badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11.5px;font-weight:600;white-space:nowrap}
+  .bCP{background:var(--cp-soft);color:var(--cp)}
+  .bIP{background:var(--ip-soft);color:var(--ip)}
+  .bCap{background:#e7eefd;color:#2f5dd0}
+  .bOk{background:var(--ok-soft);color:var(--ok)}
+  .cap{white-space:nowrap;font-variant-numeric:tabular-nums}
+  .prog{display:inline-block;font-size:10.5px;border:1px solid var(--line);border-radius:5px;padding:1px 5px;margin:1px 2px 0 0;color:#64748b;background:#f8fafc}
+  .companyLine{color:#374151}
+  .small{color:var(--sub);font-size:11.5px}
+  .area{color:#374151;line-height:1.45}
+  /* modal */
+  .mask{display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:50;align-items:flex-start;justify-content:center;padding:4vh 3vw;overflow:auto}
+  .mask.open{display:flex}
+  .modal{background:#fff;border-radius:12px;max-width:860px;width:100%;max-height:88vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(10,20,50,.3)}
+  .mhead{display:flex;gap:10px;align-items:flex-start;padding:16px 20px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+  .mhead .titles{flex:1;min-width:260px}
+  .mhead h2{margin:0;font-size:16px;line-height:1.4}
+  .mhead .enz{color:#5b6673;font-size:13px;margin-top:4px;line-height:1.45}
+  .mclose{border:none;background:#eef2f8;border-radius:8px;width:30px;height:30px;font-size:16px;cursor:pointer;color:#475569}
+  .mclose:hover{background:#e2e8f2}
+  .mbody{padding:14px 20px;overflow-y:auto}
+  .kv{display:grid;grid-template-columns:110px 1fr;row-gap:8px;font-size:13px;background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+  .kv dt{color:var(--sub)}
+  .kv dd{margin:0;line-height:1.5;color:#1f2937;white-space:pre-line}
+  .desc{margin-top:14px}
+  .desc h3{font-size:14px;margin:0}
+  .descbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;flex-wrap:wrap}
+  .seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .segbtn{border:none;background:#fff;padding:4px 14px;font-size:12.5px;cursor:pointer;color:#475569}
+  .segbtn.on{background:var(--acc);color:#fff}
+  .segbtn:disabled{opacity:.45;cursor:not-allowed}
+  pre.dtext{white-space:pre-wrap;word-break:break-word;font-family:inherit;font-size:13px;line-height:1.65;background:#fbfcfe;border:1px solid var(--line);border-radius:10px;padding:12px 14px;max-height:46vh;overflow:auto;color:#1f2937;margin:0}
+  .note{color:#94a3b8;font-size:11.5px;margin-top:6px}
+  footer{color:#94a3b8;font-size:12px;text-align:center;padding:18px;line-height:1.7}
+  .empty{padding:40px;text-align:center;color:#94a3b8}
+  .pager{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-top:12px;font-size:13px;color:#475569}
+  .pager input[type=number]{width:64px;padding:5px 6px;border:1px solid var(--line);border-radius:8px;font-size:13px}
+  .pager .pg-center{display:flex;gap:4px;flex-wrap:wrap;align-items:center}
+  .pgbtn{padding:4px 10px;font-size:13px}
+  .pgbtn.on{background:var(--acc);border-color:var(--acc);color:#fff}
+  .pgbtn:disabled{opacity:.45;cursor:default}
+  .pg-dots{color:#94a3b8;padding:0 2px}
+  .pgInfo{color:var(--sub);white-space:nowrap}
+  .favBtn{background:none;border:none;cursor:pointer;font-size:17px;line-height:1;padding:0 2px;color:#c9ced8}
+  .favBtn.on{color:#f5b301}
+  tr.favrow td{background:#fffaf0}
+  tr.favrow td:first-child{box-shadow:inset 3px 0 0 #f5b301}
+  .favStat{color:#b8860b;font-size:12.5px;white-space:nowrap}
+  @media(max-width:760px){ .kv{grid-template-columns:88px 1fr} thead th:nth-child(5),thead th:nth-child(6){display:none} td:nth-child(5),td:nth-child(6){display:none} .cellTitle .en{font-size:11px} }
+</style>
+</head>
+<body>
+<header>
+  <div class="h1row">
+    <h1>List of Dissertation Project</h1>
+    <span class="sub" id="metaLine"></span>
+  </div>
+  <div class="tools">
+    <input type="text" id="q" placeholder="搜索：编号 / 标题（中英）/ 方向 / 公司 / 导师 / 审核人…" autocomplete="off">
+    <select id="fType">
+      <option value="">全部类型</option>
+      <option value="CP">公司项目</option>
+      <option value="IP">导师个人项目</option>
+    </select>
+    <select id="fArea"><option value="">全部方向</option></select>
+    <select id="fSup"><option value="">全部导师</option></select>
+    <span class="chk"><input type="checkbox" id="fFav"> 只看收藏</span>
+    <span class="favStat" id="favStat">☆ 收藏 <b id="favN">0</b></span>
+    <button class="btn" id="reset">重置</button>
+    <span class="counts" id="counts"></span>
+  </div>
+</header>
+<main>
+  <div class="tblwrap">
+  <table>
+    <thead><tr>
+      <th style="width:40px" title="点击星标收藏">★</th>
+      <th style="width:120px">编号</th>
+      <th style="width:70px">类型</th>
+      <th>标题（中 / 英）</th>
+      <th style="width:200px">公司 / 导师</th>
+      <th style="width:230px">方向</th>
+    </tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+  </div>
+  <div id="emptyBox" class="empty" style="display:none">没有符合条件的项目，试试放宽筛选。</div>
+  <div class="pager">
+    <div class="pg-left">每页
+      <input type="number" id="perNum" min="1" max="1000" step="1" value="50"> 条
+      <span class="presets">
+        <button class="btn pbtn" data-p="10">10</button>
+        <button class="btn pbtn" data-p="20">20</button>
+        <button class="btn pbtn" data-p="50">50</button>
+        <button class="btn pbtn" data-p="100">100</button>
+        <button class="btn pbtn" data-p="200">200</button>
+      </span>
+    </div>
+    <div class="pg-center" id="pageBtns"></div>
+    <div class="pg-right" id="pgInfo"></div>
+  </div>
+</main>
+
+<div class="mask" id="mask"><div class="modal" id="modal"></div></div>
+
+<footer>
+  <div>数据快照：HKU DMS “Project List (all)”，2026-27 学年</div>
+  <div>本页为本地离线浏览工具：中文字段为机器翻译，仅供参考；申请 / 提交请回学校系统操作。</div>
+  <div>详情内含可申请人数与完整说明（中文 / English 可切换）。</div>
+</footer>
+
+<script src="data.js"></script>
+<script>
+(function(){
+  var META = (window.HKU_DATA||{}).meta||{};
+  var PROJ = (window.HKU_DATA||{}).projects||[];
+  var BUCKETS = META.buckets||[];
+  document.getElementById("metaLine").textContent =
+    "共 " + PROJ.length + " 个项目" ;
+
+  var state={q:"",type:"",area:"",sup:"",favOnly:false,page:1,per:50};
+
+  // ---- build filter option pools ----
+  var supCount={};
+  PROJ.forEach(function(p){
+    var nm=p.univSupName||p.companySupervisor;
+    if(nm)supCount[nm]=(supCount[nm]||0)+1;
+  });
+  var areaSel=document.getElementById("fArea");
+  BUCKETS.forEach(function(b){
+    var o=document.createElement("option");o.value=b.k;o.textContent=b.label+"（"+b.count+"）";areaSel.appendChild(o);
+  });
+  var supSel=document.getElementById("fSup");
+  Object.keys(supCount).sort(function(a,b){return supCount[b]-supCount[a]||a.localeCompare(b);})
+    .slice(0,80).forEach(function(k){
+      var o=document.createElement("option");o.value=k;o.textContent=k+"（"+supCount[k]+"）";supSel.appendChild(o);
+    });
+
+  // ---- helpers ----
+  function el(tag,cls,txt){var e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e;}
+
+  // ---- favorites storage: cookie preferred; file:// falls back to localStorage ----
+  function cookieWorks(){
+    try{
+      document.cookie="__favProbe=1";
+      var ok=document.cookie.indexOf("__favProbe")>=0;
+      document.cookie="__favProbe=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
+      return ok;
+    }catch(e){return false;}
+  }
+  var favStore= cookieWorks()?"cookie":"localStorage";
+  function favsFromString(s){return (s||"").split(",").filter(function(x){return x;}).map(function(x){try{return decodeURIComponent(x);}catch(e){return x;}});}
+  function loadFavs(){
+    var arr=[];
+    if(favStore==="cookie"){
+      var m;
+      var all=document.cookie;
+      for(var i=0;i<20;i++){
+        var re=new RegExp("(?:^|; )favs"+i+"=([^;]*)");
+        m=all.match(re);
+        if(!m)break;
+        arr=arr.concat(favsFromString(m[1]));
+      }
+    }else{
+      try{arr=favsFromString(localStorage.getItem("hkuFavs")||"");}catch(e){}
+    }
+    return new Set(arr);
+  }
+  function saveFavs(set){
+    var arr=Array.from(set);
+    if(favStore==="cookie"){
+      var CHUNK=3000, cur="";
+      var c=0;
+      function put(name,val){
+        try{document.cookie=name+"="+val+"; path=/; max-age=31536000";}catch(e){}
+      }
+      for(var i=0;i<arr.length;i++){
+        var piece=encodeURIComponent(arr[i]);
+        if(cur.length+piece.length+1>CHUNK){ put("favs"+(c++),cur); cur=piece; }
+        else cur=cur?cur+","+piece:piece;
+      }
+      put("favs"+(c++),cur);
+      // clear leftover chunks
+      for(;c<20;c++){try{document.cookie="favs"+c+"=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";}catch(e){}}
+    }else{
+      try{localStorage.setItem("hkuFavs",arr.map(encodeURIComponent).join(","));}catch(e){}
+    }
+  }
+  var favs=loadFavs();
+  function toggleFav(ref){
+    if(favs.has(ref))favs.delete(ref);else favs.add(ref);
+    saveFavs(favs);
+    render();
+  }
+  function favRef(p){return p.ref;}
+
+  function match(p){
+    if(state.type && p.type!==state.type)return false;
+    if(state.area && (p.cats||[]).indexOf(state.area)<0)return false;
+    if(state.sup && p.univSupName!==state.sup && p.companySupervisor!==state.sup)return false;
+    if(state.favOnly && !favs.has(p.ref))return false;
+    if(state.q){
+      var q=state.q.toLowerCase();
+      var hay=[p.ref,p.titleZh,p.titleEn,p.areaZh,p.areaEn,p.companyZh,p.companyEn,
+               p.companySupervisor,p.univSupName,p.moderator].join(" ").toLowerCase();
+      if(hay.indexOf(q)<0)return false;
+    }
+    return true;
+  }
+
+  function typeBadge(p){
+    var b=el("span","badge "+(p.type==="CP"?"bCP":"bIP"),p.typeLabel);return b;
+  }
+
+  function render(){
+    var tb=document.getElementById("rows");tb.textContent="";
+    var list=PROJ.filter(match);
+    // favorites pinned to top (stable within group)
+    list.sort(function(a,b){var af=favs.has(a.ref)?1:0,bf=favs.has(b.ref)?1:0;return bf-af;});
+    var total=list.length;
+    var per=state.per;
+    var pages=Math.max(1,Math.ceil(total/per));
+    if(state.page>pages)state.page=pages;
+    if(state.page<1)state.page=1;
+    var start=(state.page-1)*per;
+    var pageItems=list.slice(start,start+per);
+    document.getElementById("emptyBox").style.display=total?"none":"block";
+    pageItems.forEach(function(p){
+      var tr=document.createElement("tr");
+      if(favs.has(p.ref))tr.className="favrow";
+      var tdS=el("td");
+      var star=el("button","favBtn"+(favs.has(p.ref)?" on":""),favs.has(p.ref)?"★":"☆");
+      star.setAttribute("type","button");
+      star.setAttribute("aria-label","收藏");
+      star.addEventListener("click",function(ev){ev.stopPropagation();toggleFav(p.ref);});
+      tdS.appendChild(star);
+      tr.appendChild(tdS);
+      tr.appendChild(el("td",null,p.ref));
+      var tdT=el("td");tdT.appendChild(typeBadge(p));
+      tr.appendChild(tdT);
+      var tdTi=el("td","cellTitle");
+      tdTi.appendChild(el("div","zh",p.titleZh||p.titleEn));
+      if(p.titleEn && p.titleEn!==p.titleZh)tdTi.appendChild(el("div","en",p.titleEn));
+      tr.appendChild(tdTi);
+      var tdC=el("td");
+      if(p.type==="CP"){
+        var zh=p.companyZh&&p.companyZh!==p.companyEn?p.companyZh+" / ":""; 
+        tdC.appendChild(el("div","companyLine",zh+p.companyEn));
+        if(p.companySupervisor)tdC.appendChild(el("div","small","公司导师："+p.companySupervisor));
+        if(p.univSupName)tdC.appendChild(el("div","small","校内： "+p.univSupName));
+      }else{
+        if(p.univSupName)tdC.appendChild(el("div","companyLine",p.univSupName));
+        if(p.moderator)tdC.appendChild(el("div","small","审核："+p.moderator));
+      }
+      tr.appendChild(tdC);
+      var tdA=el("td");
+      tdA.appendChild(el("div","area",p.areaZh||p.areaEn||"—"));
+      if(p.areaEn&&p.areaEn!==p.areaZh)tdA.appendChild(el("div","small",p.areaEn));
+      tr.appendChild(tdA);
+      tr.addEventListener("click",function(){openDetail(p);});
+      tb.appendChild(tr);
+    });
+    document.getElementById("favN").textContent=favs.size;
+    document.getElementById("counts").textContent="筛选结果 "+total+" / "+PROJ.length+" 条";
+    renderPager(pages,total,start+1,Math.min(start+per,total));
+  }
+
+  // ---- pagination ----
+  function renderPager(pages,total,from,to){
+    var host=document.getElementById("pageBtns");host.textContent="";
+    var info=document.getElementById("pgInfo");
+    var cur=state.page;
+    info.textContent = total?("显示 "+from+"–"+to+" / "+total+" 条 · 第 "+cur+" / "+pages+" 页"):"";
+    if(pages<=1)return;
+    var prev=el("button","btn pgbtn","上一页");
+    prev.setAttribute("type","button");
+    if(cur<=1){prev.disabled=true;}else{prev.addEventListener("click",function(){state.page--;render();});}
+    host.appendChild(prev);
+    var left=Math.max(2,cur-1), right=Math.min(pages-1,cur+1);
+    var seq=[1];
+    if(left>2)seq.push("..");
+    for(var i=left;i<=right;i++)seq.push(i);
+    if(right<pages-1)seq.push("..");
+    if(pages>1)seq.push(pages);
+    seq.forEach(function(n){
+      if(n===".."){host.appendChild(el("span","pg-dots","…"));return;}
+      var b=el("button","btn pgbtn",String(n));
+      b.setAttribute("type","button");
+      if(n===cur)b.className+=" on";
+      b.addEventListener("click",function(){state.page=n;render();});
+      host.appendChild(b);
+    });
+    var next=el("button","btn pgbtn","下一页");
+    next.setAttribute("type","button");
+    if(cur>=pages){next.disabled=true;}else{next.addEventListener("click",function(){state.page++;render();});}
+    host.appendChild(next);
+  }
+
+  // ---- detail modal ----
+  function openDetail(p){
+    var m=document.getElementById("modal");m.textContent="";
+    var head=el("div","mhead");
+    var titles=el("div","titles");
+    titles.appendChild(el("h2",null,p.titleZh||p.titleEn));
+    if(p.titleEn&&p.titleEn!==p.titleZh)titles.appendChild(el("div","enz",p.titleEn));
+    head.appendChild(titles);
+    var mstar=el("button","favBtn"+(favs.has(p.ref)?" on":""),favs.has(p.ref)?"★":"☆");
+    mstar.setAttribute("type","button");
+    mstar.setAttribute("aria-label","收藏");
+    mstar.addEventListener("click",function(){
+      toggleFav(p.ref);
+      if(favs.has(p.ref)){mstar.textContent="★";mstar.classList.add("on");}
+      else{mstar.textContent="☆";mstar.classList.remove("on");}
+    });
+    head.appendChild(mstar);
+    head.appendChild(typeBadge(p));
+    head.appendChild(el("span","badge bCap","可申请 "+p.capacity+" 人"));
+    var x=el("button","mclose","✕");x.setAttribute("aria-label","关闭");
+    x.addEventListener("click",close);head.appendChild(x);
+    m.appendChild(head);
+
+    var body=el("div","mbody");
+    var kv=document.createElement("dl");kv.className="kv";
+    function row(k,v){if(!v)return;var dt=el("dt",null,k);var dd=el("dd",null,v);kv.appendChild(dt);kv.appendChild(dd);}
+    row("项目编号",p.ref);
+    row("类型",p.typeLabel+(p.mode?("（"+(p.mode==="SS"?"公司合作":"导师指导")+"）"):""));
+    if(p.type==="CP"){
+      row("公司",(p.companyZh&&p.companyZh!==p.companyEn?p.companyZh+" / ":"")+p.companyEn);
+      row("公司导师",p.companySupervisor);
+      row("校内负责",p.univSupName);
+    }else{
+      row("导师",p.univSupName);
+      row("审核人",p.moderator);
+    }
+    row("方向",(p.areaZh?p.areaZh+"\n":"")+(p.areaEn&&p.areaEn!==p.areaZh?p.areaEn:""));
+    row("可申请人数",p.capacity+" 人");
+    body.appendChild(kv);
+
+    if(p.descriptionText){
+      var dsec=el("div","desc");
+      var bar=el("div","descbar");
+      bar.appendChild(el("h3",null,"项目详细说明"));
+      var seg=el("div","seg");
+      var bZh=el("button","segbtn on","中文");
+      var bEn=el("button","segbtn","English");
+      seg.appendChild(bZh);seg.appendChild(bEn);
+      bar.appendChild(seg);
+      dsec.appendChild(bar);
+      var zhAvail=!!(p.descZh && p.descZh.trim());
+      if(!zhAvail)bZh.disabled=true;
+      var pre=el("pre","dtext", zhAvail?p.descZh:p.descriptionText);
+      var setLang=function(isZh){
+        bZh.classList.toggle("on",isZh);
+        bEn.classList.toggle("on",!isZh);
+        pre.textContent = isZh ? p.descZh : p.descriptionText;
+      };
+      bZh.addEventListener("click",function(){setLang(true);});
+      bEn.addEventListener("click",function(){setLang(false);});
+      dsec.appendChild(pre);
+      if(!zhAvail)dsec.appendChild(el("div","note","中文翻译生成中/暂缺，当前显示英文原文。"));
+      else dsec.appendChild(el("div","note","中文为机器翻译，仅供参考。"));
+      body.appendChild(dsec);
+    }
+    var copyRow=el("div",null,"");
+    var copyBtn=el("button","btn","复制项目编号");
+    copyBtn.addEventListener("click",function(){
+      if(navigator.clipboard){navigator.clipboard.writeText(p.ref).then(function(){copyBtn.textContent="已复制 ✓";setTimeout(function(){copyBtn.textContent="复制项目编号";},1200);},function(){});}
+    });
+    body.appendChild(copyRow);copyRow.appendChild(copyBtn);
+    body.appendChild(el("div","note","中文字段为机器翻译参考。申请请回学校系统按编号操作。"));
+    m.appendChild(body);
+    document.getElementById("mask").classList.add("open");
+  }
+  function close(){document.getElementById("mask").classList.remove("open");}
+  document.getElementById("mask").addEventListener("click",function(e){if(e.target===this)close();});
+  document.addEventListener("keydown",function(e){if(e.key==="Escape")close();});
+
+  // ---- wire events ----
+  var qEl=document.getElementById("q");
+  var deb;
+  function toPage1(){state.page=1;render();}
+  qEl.addEventListener("input",function(){clearTimeout(deb);var v=this.value;deb=setTimeout(function(){state.q=v.trim();toPage1();},150);});
+  document.getElementById("fType").addEventListener("change",function(e){state.type=e.target.value;toPage1();});
+  document.getElementById("fArea").addEventListener("change",function(e){state.area=e.target.value;toPage1();});
+  document.getElementById("fSup").addEventListener("change",function(e){state.sup=e.target.value;toPage1();});
+  var perNum=document.getElementById("perNum");
+  perNum.addEventListener("change",function(){
+    var v=parseInt(this.value,10);
+    if(!v||v<1)v=50;
+    if(v>1000)v=1000;
+    this.value=v;state.per=v;state.page=1;render();
+  });
+  var presets=document.querySelectorAll(".pbtn");
+  Array.prototype.forEach.call(presets,function(btn){
+    btn.addEventListener("click",function(){perNum.value=this.getAttribute("data-p");state.per=parseInt(perNum.value,10);state.page=1;render();});
+  });
+  document.getElementById("fFav").addEventListener("change",function(e){state.favOnly=e.target.checked;state.page=1;render();});
+  document.getElementById("reset").addEventListener("click",function(){
+    state={q:"",type:"",area:"",sup:"",favOnly:false,page:1,per:parseInt(perNum.value,10)||50};
+    qEl.value="";document.getElementById("fType").value="";document.getElementById("fArea").value="";
+    document.getElementById("fSup").value="";document.getElementById("fFav").checked=false;render();
+  });
+  render();
+})();
+</script>
+</body>
+</html>
